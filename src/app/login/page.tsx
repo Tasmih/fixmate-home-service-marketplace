@@ -52,7 +52,7 @@ if (data) {
 }
   }
 
-  
+
  const googleLogin = async () => {
 
   await authClient.signIn.social({
@@ -84,7 +84,7 @@ if (data) {
               <div className="w-10 h-10 rounded-full bg-[#F4B400] flex items-center justify-center text-[#14213D]">
                 <FaUserCheck />
               </div>
-              <span>Verified Professionals</span>
+              <span>Verified </span>
             </div>
 
             <div className="flex items-center gap-4">

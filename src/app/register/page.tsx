@@ -65,7 +65,7 @@ export default function RegisterPage() {
           <h1 className="text-4xl font-bold leading-tight">
             Trusted Services
             <br />
-            At Your Doorstep
+            At Your Doorste
           </h1>
 
 

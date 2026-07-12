@@ -70,7 +70,7 @@ export default function RegisterPage() {
 
 
           <p className="mt-5 text-white/80 leading-7">
-            Find verified professionals for electrician, plumbing, cleaning and other home 
+            Find verified professionals for electrician, plumbing, cleaning and other home services.
           </p>
 
 

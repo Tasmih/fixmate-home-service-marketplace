@@ -6,4 +6,5 @@ export interface IServiceFormData {
   price: string;
   location: string;
   image: string;
+  providerId?: string;
 }

@@ -15,8 +15,6 @@ export const createService = async (
 
       price: Number(serviceData.price),
 
-      providerId: "demo-provider",
-
     },
     "POST"
   );
@@ -42,16 +40,31 @@ export const getServices = async () => {
 // Get Single Service
 
 export const getServiceById = async (
-  id: string
+  id:string
 ) => {
 
-  return serverFetch(
-    `/api/services/${id}`
-  );
+  try {
+
+    const result = await serverFetch(
+      `/api/services/${id}`
+    );
+
+
+    return result;
+
+
+  } catch(error){
+
+    console.log(error);
+
+    return {
+      success:false,
+      message:"Failed to fetch service"
+    };
+
+  }
 
 };
-
-
 
 
 // Update Service
@@ -63,7 +76,10 @@ export const updateService = async (
 
   return serverMutation(
     `/api/services/${id}`,
-    serviceData,
+    {
+      ...serviceData,
+      price:Number(serviceData.price)
+    },
     "PATCH"
   );
 
@@ -83,5 +99,23 @@ export const deleteService = async (
     null,
     "DELETE"
   );
+
+};
+
+// Get Provider Services
+
+export const getProviderServices = async (
+
+  providerId:string
+
+) => {
+
+
+  return serverFetch(
+
+    `/api/services/provider/${providerId}`
+
+  );
+
 
 };

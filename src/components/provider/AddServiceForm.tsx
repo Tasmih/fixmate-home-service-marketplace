@@ -1,10 +1,17 @@
 "use client";
 
-import React, { useState } from "react";
+import React, {
+  useState,
+} from "react";
 
-import { uploadImage } from "@/lib/actions/upload.actions";
+import {
+  uploadImage,
+  uploadImageFromUrl,
+} from "@/lib/actions/upload.actions";
 
-import { authClient } from "@/lib/auth-client";
+import {
+  authClient,
+} from "@/lib/auth-client";
 
 import {
   BriefcaseBusiness,
@@ -14,70 +21,122 @@ import {
   DollarSign,
   Layers,
   Send,
+  X,
 } from "lucide-react";
 
-import { Button } from "@heroui/react";
+import {
+  Button,
+} from "@heroui/react";
 
-import { toast } from "react-toastify";
+import {
+  toast,
+} from "react-toastify";
 
 import {
   FaCheckCircle,
   FaTimesCircle,
 } from "react-icons/fa";
 
-import { serviceCategories } from "@/constants/serviceCategories";
+import {
+  serviceCategories,
+} from "@/constants/serviceCategories";
 
-import { IServiceFormData } from "@/types/service";
+import {
+  IServiceFormData,
+} from "@/types/service";
 
-import { createService } from "@/lib/actions/service.actions";
+import {
+  createService,
+} from "@/lib/actions/service.actions";
 
 
 
-const initialState: IServiceFormData = {
-  title: "",
-  shortDescription: "",
-  description: "",
-  category: "",
-  price: "",
-  location: "",
-  image: "",
+const initialState:IServiceFormData = {
+
+  title:"",
+
+  shortDescription:"",
+
+  description:"",
+
+  category:"",
+
+  price:"",
+
+  location:"",
+
+  image:"",
+
 };
 
 
 
-export default function AddServiceForm() {
 
 
-  const [formData, setFormData] =
-    useState<IServiceFormData>(initialState);
+export default function AddServiceForm(){
 
 
-  const [imageFile, setImageFile] =
-    useState<File | null>(null);
+  const [
+    formData,
+    setFormData
+  ] = useState<IServiceFormData>(
+    initialState
+  );
 
 
-  const [loading, setLoading] =
-    useState(false);
+
+  const [
+    imageFile,
+    setImageFile
+  ] = useState<File | null>(
+    null
+  );
+
+
+
+  const [
+    imagePreview,
+    setImagePreview
+  ] = useState<string>("");
+
+
+
+  const [
+    loading,
+    setLoading
+  ] = useState(false);
+
+
+
 
 
 
 
 
   const handleChange = (
-    e: React.ChangeEvent<
+
+    e:React.ChangeEvent<
+
       HTMLInputElement |
+
       HTMLTextAreaElement |
+
       HTMLSelectElement
+
     >
-  ) => {
+
+  )=>{
+
 
     setFormData({
 
       ...formData,
 
-      [e.target.name]: e.target.value,
+      [e.target.name]:
+        e.target.value,
 
     });
+
 
   };
 
@@ -86,9 +145,86 @@ export default function AddServiceForm() {
 
 
 
+
+
+
+  const handleImageChange = (
+
+    e:React.ChangeEvent<HTMLInputElement>
+
+  )=>{
+
+
+    const file =
+      e.target.files?.[0];
+
+
+
+    if(!file){
+
+      return;
+
+    }
+
+
+
+    setImageFile(file);
+
+
+
+    const previewURL =
+      URL.createObjectURL(file);
+
+
+
+    setImagePreview(
+      previewURL
+    );
+
+
+  };
+
+
+
+
+
+
+
+
+
+  const removeImage = ()=>{
+
+
+    setImageFile(null);
+
+
+    setImagePreview("");
+
+
+    setFormData({
+
+      ...formData,
+
+      image:"",
+
+    });
+
+
+  };
+
+
+
+
+
+
+
+
+
   const handleSubmit = async (
-    e: React.FormEvent<HTMLFormElement>
-  ) => {
+
+    e:React.FormEvent<HTMLFormElement>
+
+  )=>{
 
 
     e.preventDefault();
@@ -101,8 +237,13 @@ export default function AddServiceForm() {
     try {
 
 
-      const { data: session } =
-        await authClient.getSession();
+
+      const {
+        data:session
+      } =
+      await authClient.getSession();
+
+
 
 
 
@@ -110,10 +251,15 @@ export default function AddServiceForm() {
 
 
         toast.error(
+
           "Please login first",
+
           {
+
             icon:<FaTimesCircle />,
+
           }
+
         );
 
 
@@ -122,6 +268,7 @@ export default function AddServiceForm() {
 
         return;
 
+
       }
 
 
@@ -129,7 +276,11 @@ export default function AddServiceForm() {
 
 
 
-      let imageUrl = formData.image;
+
+
+      let imageUrl =
+        formData.image;
+
 
 
 
@@ -137,8 +288,24 @@ export default function AddServiceForm() {
       if(imageFile){
 
 
-        imageUrl = await uploadImage(
+        imageUrl =
+        await uploadImage(
+
           imageFile
+
+        );
+
+
+      }
+
+      else if(formData.image){
+
+
+        imageUrl =
+        await uploadImageFromUrl(
+
+          formData.image
+
         );
 
 
@@ -150,7 +317,8 @@ export default function AddServiceForm() {
 
 
 
-      const result = await createService({
+      const result =
+      await createService({
 
 
         ...formData,
@@ -159,11 +327,11 @@ export default function AddServiceForm() {
         image:imageUrl,
 
 
-        providerId: session.user.id,
+        providerId:
+          session.user.id,
 
 
       });
-
 
 
 
@@ -175,29 +343,51 @@ export default function AddServiceForm() {
 
 
         toast.success(
+
           "Service created successfully",
+
           {
+
             icon:<FaCheckCircle />,
+
           }
+
         );
 
 
 
-        setFormData(initialState);
+        setFormData(
+
+          initialState
+
+        );
+
 
 
         setImageFile(null);
 
 
 
-      }else{
+        setImagePreview("");
+
+
+
+      }
+
+      else{
+
 
 
         toast.error(
+
           "Service creation failed",
+
           {
+
             icon:<FaTimesCircle />,
+
           }
+
         );
 
 
@@ -207,7 +397,10 @@ export default function AddServiceForm() {
 
 
 
-    }catch(error){
+
+    }
+
+    catch(error){
 
 
 
@@ -216,15 +409,22 @@ export default function AddServiceForm() {
 
 
       toast.error(
+
         "Something went wrong",
+
         {
+
           icon:<FaTimesCircle />,
+
         }
+
       );
 
 
 
-    }finally{
+    }
+
+    finally{
 
 
       setLoading(false);
@@ -233,33 +433,51 @@ export default function AddServiceForm() {
     }
 
 
-
   };
-
-
-
-
-
-
-
-
   return (
 
+
     <form
+
       onSubmit={handleSubmit}
-      className="space-y-6 rounded-3xl border border-gray-400 bg-white p-5 sm:p-8 shadow-sm"
+
+      className="space-y-6 rounded-3xl border border-gray-400 bg-white p-5 shadow-sm sm:p-8"
+
     >
 
 
 
+
+
+
+
       <InputField
+
+
         label="Service Title"
+
+
         name="title"
+
+
         placeholder="AC Repair Service"
+
+
         value={formData.title}
+
+
         onChange={handleChange}
-        icon={<BriefcaseBusiness size={18}/>}
+
+
+        icon={
+          <BriefcaseBusiness size={18}/>
+        }
+
+
       />
+
+
+
 
 
 
@@ -267,13 +485,37 @@ export default function AddServiceForm() {
 
 
       <InputField
+
+
         label="Short Description"
+
+
         name="shortDescription"
+
+
         placeholder="Professional home service"
-        value={formData.shortDescription}
+
+
+        value={
+          formData.shortDescription
+        }
+
+
         onChange={handleChange}
-        icon={<FileText size={18}/>}
+
+
+        icon={
+          <FileText size={18}/>
+        }
+
+
       />
+
+
+
+
+
+
 
 
 
@@ -286,25 +528,38 @@ export default function AddServiceForm() {
 
         <label className="mb-2 block text-sm font-semibold text-[#14213D]">
 
+
           Full Description
+
 
         </label>
 
 
 
+
+
         <textarea
+
 
           name="description"
 
-          value={formData.description}
+
+          value={
+            formData.description
+          }
+
 
           onChange={handleChange}
 
+
           rows={5}
+
 
           placeholder="Describe your service details"
 
+
           className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-800 outline-none focus:border-[#2563EB]"
+
 
         />
 
@@ -319,15 +574,19 @@ export default function AddServiceForm() {
 
 
 
+
       <div>
 
 
 
         <label className="mb-2 block text-sm font-semibold text-[#14213D]">
 
+
           Category
 
+
         </label>
+
 
 
 
@@ -336,11 +595,15 @@ export default function AddServiceForm() {
         <div className="relative">
 
 
+
           <Layers
+
 
             size={18}
 
+
             className="absolute left-3 top-3.5 text-gray-400"
+
 
           />
 
@@ -348,47 +611,72 @@ export default function AddServiceForm() {
 
 
 
+
+
           <select
+
 
             name="category"
 
-            value={formData.category}
+
+            value={
+              formData.category
+            }
+
 
             onChange={handleChange}
 
+
             className="h-12 w-full rounded-xl border border-gray-200 bg-white pl-10 pr-4 text-sm text-gray-800 outline-none focus:border-[#2563EB]"
+
 
           >
 
 
+
             <option value="">
+
+
               Select Category
+
+
             </option>
+
+
 
 
 
 
             {
               serviceCategories.map(
+
                 (category)=>(
 
 
                   <option
 
+
                     key={category}
+
 
                     value={category}
 
+
                   >
 
+
                     {category}
+
 
                   </option>
 
 
                 )
+
               )
             }
+
+
 
 
 
@@ -410,25 +698,44 @@ export default function AddServiceForm() {
 
 
 
+
+
+
+
+
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+
+
 
 
 
         <InputField
 
+
           label="Service Price"
+
 
           name="price"
 
+
           type="number"
+
 
           placeholder="1200"
 
-          value={formData.price}
+
+          value={
+            formData.price
+          }
+
 
           onChange={handleChange}
 
-          icon={<DollarSign size={18}/>}
+
+          icon={
+            <DollarSign size={18}/>
+          }
+
 
         />
 
@@ -437,25 +744,41 @@ export default function AddServiceForm() {
 
 
 
+
+
         <InputField
+
 
           label="Service Location"
 
+
           name="location"
+
 
           placeholder="Dhaka"
 
-          value={formData.location}
+
+          value={
+            formData.location
+          }
+
 
           onChange={handleChange}
 
-          icon={<MapPin size={18}/>}
+
+          icon={
+            <MapPin size={18}/>
+          }
+
 
         />
 
 
 
       </div>
+
+
+
 
 
 
@@ -468,9 +791,12 @@ export default function AddServiceForm() {
       <div>
 
 
+
         <label className="mb-2 block text-sm font-semibold text-[#14213D]">
 
+
           Service Image
+
 
         </label>
 
@@ -478,40 +804,180 @@ export default function AddServiceForm() {
 
 
 
-        <div className="relative">
 
-
-          <ImageIcon
-
-            size={18}
-
-            className="absolute left-3 top-3.5 text-gray-400"
-
-          />
+        <div className="space-y-4">
 
 
 
 
 
-          <input
+          <div className="relative">
 
-            type="file"
 
-            accept="image/*"
 
-            onChange={(e)=>
+            <ImageIcon
 
-              setImageFile(
 
-                e.target.files?.[0] || null
+              size={18}
 
-              )
 
-            }
+              className="absolute left-3 top-3.5 text-gray-400"
 
-            className="h-12 w-full rounded-xl border border-gray-200 bg-white pl-10 pr-4 text-sm text-gray-800"
 
-          />
+            />
+
+
+
+
+
+
+            <input
+
+
+              type="file"
+
+
+              accept="image/*"
+
+
+              onChange={handleImageChange}
+
+
+              className="h-12 w-full rounded-xl border border-gray-200 bg-white pl-10 pr-4 text-sm text-gray-800"
+
+
+            />
+
+
+
+          </div>
+
+
+
+
+
+
+
+
+
+          <div>
+
+
+            <p className="mb-2 text-sm font-medium text-gray-600">
+
+
+              Or Paste Image URL
+
+
+            </p>
+
+
+
+
+
+            <input
+
+
+              type="url"
+
+
+              name="image"
+
+
+              value={
+                formData.image
+              }
+
+
+              onChange={(e)=>{
+
+
+                handleChange(e);
+
+
+                setImagePreview(
+
+                  e.target.value
+
+                );
+
+
+              }}
+
+
+              placeholder="https://images.unsplash.com/example.jpg"
+
+
+              className="h-12 w-full rounded-xl border border-gray-200 bg-white px-4 text-sm text-gray-800 outline-none focus:border-[#2563EB]"
+
+
+            />
+
+
+          </div>
+
+
+
+
+
+
+
+
+
+          {
+            imagePreview && (
+
+
+              <div className="relative overflow-hidden rounded-2xl border border-gray-200">
+
+
+                <img
+
+
+                  src={imagePreview}
+
+
+                  alt="Preview"
+
+
+                  className="h-56 w-full object-cover"
+
+
+                />
+
+
+
+
+
+                <button
+
+
+                  type="button"
+
+
+                  onClick={removeImage}
+
+
+                  className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-red-500 text-white"
+
+
+                >
+
+
+                  <X size={18}/>
+
+
+                </button>
+
+
+
+              </div>
+
+
+            )
+          }
+
+
 
 
 
@@ -519,25 +985,23 @@ export default function AddServiceForm() {
 
 
 
+
       </div>
 
+            <Button
 
-
-
-
-
-
-
-
-      <Button
 
         type="submit"
 
+
         isLoading={loading}
+
 
         className="h-12 w-full rounded-xl bg-[#2563EB] font-semibold text-white"
 
+
       >
+
 
 
         <Send size={18}/>
@@ -545,7 +1009,9 @@ export default function AddServiceForm() {
 
 
 
+
         {
+
 
           loading
 
@@ -553,11 +1019,15 @@ export default function AddServiceForm() {
 
           : "Create Service"
 
+
         }
 
 
 
+
+
       </Button>
+
 
 
 
@@ -579,37 +1049,63 @@ export default function AddServiceForm() {
 
 
 
+
+
+
+
+
+
 function InputField({
+
 
   label,
 
+
   name,
+
 
   type="text",
 
+
   placeholder,
+
 
   value,
 
+
   onChange,
 
+
   icon,
+
+
 
 }:{
 
   label:string;
 
+
   name:string;
+
 
   type?:string;
 
+
   placeholder:string;
+
 
   value:string;
 
-  onChange:(e:React.ChangeEvent<HTMLInputElement>)=>void;
+
+  onChange:(
+
+    e:React.ChangeEvent<HTMLInputElement>
+
+  )=>void;
+
 
   icon:React.ReactNode;
+
 
 }) {
 
@@ -618,14 +1114,22 @@ function InputField({
   return (
 
 
+
     <div>
+
+
 
 
       <label className="mb-2 block text-sm font-semibold text-[#14213D]">
 
+
         {label}
 
+
       </label>
+
+
+
 
 
 
@@ -634,9 +1138,14 @@ function InputField({
       <div className="relative">
 
 
+
+
+
         <div className="absolute left-3 top-3.5 text-gray-400">
 
+
           {icon}
+
 
         </div>
 
@@ -644,21 +1153,39 @@ function InputField({
 
 
 
+
+
         <input
+
+
 
           name={name}
 
+
+
           type={type}
+
+
 
           placeholder={placeholder}
 
+
+
           value={value}
+
+
 
           onChange={onChange}
 
+
+
           className="h-12 w-full rounded-xl border border-gray-200 bg-white pl-10 pr-4 text-sm text-gray-800 outline-none placeholder:text-gray-400 focus:border-[#2563EB]"
 
+
+
         />
+
+
 
 
 
@@ -666,7 +1193,10 @@ function InputField({
 
 
 
+
+
     </div>
+
 
 
   );

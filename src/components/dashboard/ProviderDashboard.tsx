@@ -44,16 +44,16 @@ export default function ProviderDashboard() {
           <DashboardCard
             title="Add Service"
             description="Create a new service listing"
-            link="/services/add"
+            link="/dashboard/provider/add-service"
           />
 
 
           <DashboardCard
             title="Manage Services"
             description="Edit or delete your services"
-            link="/services/manage"
+            link="/dashboard/provider/services"
           />
-
+         
 
           <DashboardCard
             title="Booking Requests"

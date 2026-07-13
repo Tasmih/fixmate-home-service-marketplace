@@ -1,60 +1,175 @@
-const IMGBB_API_KEY =
-  process.env.NEXT_PUBLIC_IMGBB_API_KEY;
-
-
-
-export const uploadImage = async (
-  imageFile: File
+export const uploadImageFromUrl = async (
+  imageUrl: string
 ) => {
 
 
-  if (!IMGBB_API_KEY) {
-
-    throw new Error(
-      "IMGBB API key is missing"
-    );
-
-  }
+  try {
 
 
-
-  const formData = new FormData();
-
-
-  formData.append(
-    "image",
-    imageFile
-  );
+    const response = await fetch(imageUrl);
 
 
+    if(!response.ok){
 
-  const response = await fetch(
-    `https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`,
-    {
-
-      method: "POST",
-
-      body: formData,
+      throw new Error(
+        "Image URL not accessible"
+      );
 
     }
-  );
 
 
 
-  const data = await response.json();
+    const blob = await response.blob();
 
 
 
-  if (!data.success) {
+    const formData = new FormData();
 
-    throw new Error(
-      "Image upload failed"
+
+
+    formData.append(
+      "image",
+      blob
     );
+
+
+
+    const uploadResponse = await fetch(
+
+      `https://api.imgbb.com/1/upload?key=${process.env.NEXT_PUBLIC_IMGBB_API_KEY}`,
+
+      {
+
+        method:"POST",
+
+        body:formData,
+
+      }
+
+    );
+
+
+
+    const data = await uploadResponse.json();
+
+
+
+
+    if(!data.success){
+
+      throw new Error(
+        "imgBB upload failed"
+      );
+
+    }
+
+
+
+
+    return data.data.url;
+
+
+
+  } catch(error){
+
+
+    console.log(error);
+
+
+    throw error;
+
 
   }
 
 
+};
 
-  return data.data.url;
+export const uploadImage = async (
+
+  imageFile: File
+
+) => {
+
+
+  try {
+
+
+    const formData = new FormData();
+
+
+
+    formData.append(
+
+      "image",
+
+      imageFile
+
+    );
+
+
+
+
+
+    const response = await fetch(
+
+      `https://api.imgbb.com/1/upload?key=${process.env.NEXT_PUBLIC_IMGBB_API_KEY}`,
+
+      {
+
+        method:"POST",
+
+        body:formData,
+
+      }
+
+    );
+
+
+
+
+
+
+    const data = await response.json();
+
+
+
+
+
+
+    if(!data.success){
+
+
+      throw new Error(
+
+        "imgBB upload failed"
+
+      );
+
+
+    }
+
+
+
+
+
+
+
+    return data.data.url;
+
+
+
+
+
+  } catch(error){
+
+
+    console.log(error);
+
+
+    throw error;
+
+
+  }
+
 
 };

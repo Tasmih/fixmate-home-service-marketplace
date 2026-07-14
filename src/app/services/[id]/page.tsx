@@ -163,11 +163,9 @@ service.image ||
 alt={service.title}
 
 fill
-
-className="
-object-cover
-"
-
+ priority
+  sizes="(max-width: 1024px) 100vw, 50vw"
+  className="object-cover"
 />
 
 

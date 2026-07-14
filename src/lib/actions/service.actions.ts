@@ -128,3 +128,42 @@ export const getProviderServices = async (
 
 
 };
+
+
+
+
+// Create Booking
+
+export const createBooking = async (
+
+  bookingData: {
+
+    serviceId:string;
+
+    customerId:string;
+
+    bookingDate:string;
+
+    address:string;
+
+    phone:string;
+
+    paymentAmount:number;
+
+  }
+
+)=>{
+
+
+return serverMutation(
+
+"/api/bookings",
+
+bookingData,
+
+"POST"
+
+);
+
+
+};

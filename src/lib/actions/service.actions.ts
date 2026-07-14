@@ -1,5 +1,6 @@
 import { serverFetch, serverMutation } from "../api";
 import { IServiceFormData } from "@/types/service";
+import {IServiceResponse} from "@/types/service";
 
 
 // Create Service
@@ -26,11 +27,19 @@ export const createService = async (
 
 // Get All Services
 
-export const getServices = async () => {
+export const getServices = async (
+
+  query:string = ""
+
+):Promise<IServiceResponse> => {
+
 
   return serverFetch(
-    "/api/services"
+
+    `/api/services?${query}`
+
   );
+
 
 };
 

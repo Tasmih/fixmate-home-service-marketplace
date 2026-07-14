@@ -4,6 +4,7 @@ import AdminDashboard from "@/components/dashboard/AdminDashboard";
 import CustomerDashboard from "@/components/dashboard/CustomerDashboard";
 import ProviderDashboard from "@/components/dashboard/ProviderDashboard";
 import { useSession } from "@/lib/auth-client";
+import { unknown } from "better-auth";
 
 export default function DashboardPage() {
 

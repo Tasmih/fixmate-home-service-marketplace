@@ -61,9 +61,17 @@ const initialState:IServiceFormData = {
 
   category:"",
 
+  subcategory:"",
+
+  tags:[],
+
   price:"",
 
   location:"",
+
+  availability:[],
+
+  duration:"",
 
   image:"",
 
@@ -72,8 +80,13 @@ const initialState:IServiceFormData = {
 
 
 
-
 export default function AddServiceForm(){
+
+
+  const [tagInput,setTagInput] = useState("");
+
+  const [availabilityInput,setAvailabilityInput] = useState("");
+
 
 
   const [
@@ -105,15 +118,7 @@ export default function AddServiceForm(){
     loading,
     setLoading
   ] = useState(false);
-
-
-
-
-
-
-
-
-  const handleChange = (
+    const handleChange = (
 
     e:React.ChangeEvent<
 
@@ -133,14 +138,13 @@ export default function AddServiceForm(){
       ...formData,
 
       [e.target.name]:
+
         e.target.value,
 
     });
 
 
   };
-
-
 
 
 
@@ -156,6 +160,7 @@ export default function AddServiceForm(){
 
 
     const file =
+
       e.target.files?.[0];
 
 
@@ -173,18 +178,19 @@ export default function AddServiceForm(){
 
 
     const previewURL =
+
       URL.createObjectURL(file);
 
 
 
     setImagePreview(
+
       previewURL
+
     );
 
 
   };
-
-
 
 
 
@@ -198,7 +204,9 @@ export default function AddServiceForm(){
     setImageFile(null);
 
 
+
     setImagePreview("");
+
 
 
     setFormData({
@@ -218,11 +226,81 @@ export default function AddServiceForm(){
 
 
 
+  const addTag = ()=>{
+
+
+    if(!tagInput.trim()) return;
+
+
+
+    setFormData({
+
+
+      ...formData,
+
+
+      tags:[
+
+        ...formData.tags,
+
+        tagInput.trim()
+
+      ]
+
+    });
+
+
+
+    setTagInput("");
+
+
+  };
+
+
+
+
+
+
+
+  const addAvailability = ()=>{
+
+
+    if(!availabilityInput.trim()) return;
+
+
+
+    setFormData({
+
+
+      ...formData,
+
+
+      availability:[
+
+        ...formData.availability,
+
+        availabilityInput.trim()
+
+      ]
+
+    });
+
+
+
+    setAvailabilityInput("");
+
+
+  };
+
+
+
+
+
 
 
   const handleSubmit = async (
 
-    e:React.FormEvent<HTMLFormElement>
+    e:React.SubmitEvent<HTMLFormElement>
 
   )=>{
 
@@ -239,8 +317,11 @@ export default function AddServiceForm(){
 
 
       const {
+
         data:session
+
       } =
+
       await authClient.getSession();
 
 
@@ -277,9 +358,11 @@ export default function AddServiceForm(){
 
 
 
-
       let imageUrl =
+
         formData.image;
+
+
 
 
 
@@ -288,12 +371,14 @@ export default function AddServiceForm(){
       if(imageFile){
 
 
+
         imageUrl =
-        await uploadImage(
 
-          imageFile
+          await uploadImage(
 
-        );
+            imageFile
+
+          );
 
 
       }
@@ -301,15 +386,18 @@ export default function AddServiceForm(){
       else if(formData.image){
 
 
+
         imageUrl =
-        await uploadImageFromUrl(
 
-          formData.image
+          await uploadImageFromUrl(
 
-        );
+            formData.image
+
+          );
 
 
       }
+
 
 
 
@@ -318,20 +406,27 @@ export default function AddServiceForm(){
 
 
       const result =
+
       await createService({
+
 
 
         ...formData,
 
 
+
         image:imageUrl,
 
 
+
         providerId:
+
           session.user.id,
 
 
+
       });
+
 
 
 
@@ -391,14 +486,15 @@ export default function AddServiceForm(){
         );
 
 
+
       }
 
 
 
 
 
-
     }
+
 
     catch(error){
 
@@ -424,6 +520,7 @@ export default function AddServiceForm(){
 
     }
 
+
     finally{
 
 
@@ -434,7 +531,8 @@ export default function AddServiceForm(){
 
 
   };
-  return (
+
+    return (
 
 
     <form
@@ -444,10 +542,6 @@ export default function AddServiceForm(){
       className="space-y-6 rounded-3xl border border-gray-400 bg-white p-5 shadow-sm sm:p-8"
 
     >
-
-
-
-
 
 
 
@@ -481,9 +575,6 @@ export default function AddServiceForm(){
 
 
 
-
-
-
       <InputField
 
 
@@ -496,9 +587,7 @@ export default function AddServiceForm(){
         placeholder="Professional home service"
 
 
-        value={
-          formData.shortDescription
-        }
+        value={formData.shortDescription}
 
 
         onChange={handleChange}
@@ -510,12 +599,6 @@ export default function AddServiceForm(){
 
 
       />
-
-
-
-
-
-
 
 
 
@@ -537,16 +620,13 @@ export default function AddServiceForm(){
 
 
 
-
         <textarea
 
 
           name="description"
 
 
-          value={
-            formData.description
-          }
+          value={formData.description}
 
 
           onChange={handleChange}
@@ -564,7 +644,6 @@ export default function AddServiceForm(){
         />
 
 
-
       </div>
 
 
@@ -573,10 +652,7 @@ export default function AddServiceForm(){
 
 
 
-
-
       <div>
-
 
 
         <label className="mb-2 block text-sm font-semibold text-[#14213D]">
@@ -589,11 +665,7 @@ export default function AddServiceForm(){
 
 
 
-
-
-
         <div className="relative">
-
 
 
           <Layers
@@ -601,15 +673,9 @@ export default function AddServiceForm(){
 
             size={18}
 
-
             className="absolute left-3 top-3.5 text-gray-400"
 
-
           />
-
-
-
-
 
 
 
@@ -619,9 +685,7 @@ export default function AddServiceForm(){
             name="category"
 
 
-            value={
-              formData.category
-            }
+            value={formData.category}
 
 
             onChange={handleChange}
@@ -644,9 +708,6 @@ export default function AddServiceForm(){
 
 
 
-
-
-
             {
               serviceCategories.map(
 
@@ -655,18 +716,13 @@ export default function AddServiceForm(){
 
                   <option
 
-
                     key={category}
-
 
                     value={category}
 
-
                   >
 
-
                     {category}
-
 
                   </option>
 
@@ -678,14 +734,10 @@ export default function AddServiceForm(){
 
 
 
-
-
           </select>
 
 
-
         </div>
-
 
 
       </div>
@@ -698,12 +750,57 @@ export default function AddServiceForm(){
 
 
 
-
-
-
-
-
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+
+
+        <InputField
+
+
+          label="Subcategory"
+
+
+          name="subcategory"
+
+
+          placeholder="Example: Split AC Repair"
+
+
+          value={formData.subcategory}
+
+
+          onChange={handleChange}
+
+
+          icon={<Layers size={18}/>}
+
+
+        />
+
+
+
+
+        <InputField
+
+
+          label="Service Duration"
+
+
+          name="duration"
+
+
+          placeholder="Example: 2 Hours"
+
+
+          value={formData.duration}
+
+
+          onChange={handleChange}
+
+
+          icon={<FileText size={18}/>}
+
+
+        />
 
 
 
@@ -724,23 +821,16 @@ export default function AddServiceForm(){
           placeholder="1200"
 
 
-          value={
-            formData.price
-          }
+          value={formData.price}
 
 
           onChange={handleChange}
 
 
-          icon={
-            <DollarSign size={18}/>
-          }
+          icon={<DollarSign size={18}/>}
 
 
         />
-
-
-
 
 
 
@@ -758,17 +848,13 @@ export default function AddServiceForm(){
           placeholder="Dhaka"
 
 
-          value={
-            formData.location
-          }
+          value={formData.location}
 
 
           onChange={handleChange}
 
 
-          icon={
-            <MapPin size={18}/>
-          }
+          icon={<MapPin size={18}/>}
 
 
         />
@@ -783,6 +869,106 @@ export default function AddServiceForm(){
 
 
 
+      <div>
+
+
+        <label className="mb-2 block text-sm font-semibold text-[#14213D]">
+
+
+          Tags
+
+
+        </label>
+
+
+
+
+        <div className="flex gap-3">
+
+
+
+          <input
+
+
+            value={tagInput}
+
+
+            onChange={(e)=>setTagInput(e.target.value)}
+
+
+            placeholder="Example: AC, Cooling"
+
+
+            className="h-12 flex-1 rounded-xl border px-4"
+
+
+          />
+
+
+
+
+          <button
+
+
+            type="button"
+
+
+            onClick={addTag}
+
+
+            className="rounded-xl bg-[#2563EB] px-5 text-white"
+
+
+          >
+
+            Add
+
+          </button>
+
+
+
+        </div>
+
+
+
+
+
+        <div className="mt-3 flex flex-wrap gap-2">
+
+
+
+          {
+            formData.tags.map((tag,index)=>(
+
+
+              <span
+
+
+                key={index}
+
+
+                className="rounded-full bg-blue-100 px-3 py-1 text-sm"
+
+
+              >
+
+                {tag}
+
+              </span>
+
+
+            ))
+          }
+
+
+
+        </div>
+
+
+
+      </div>
+
+
 
 
 
@@ -790,6 +976,101 @@ export default function AddServiceForm(){
 
       <div>
 
+
+        <label className="mb-2 block text-sm font-semibold text-[#14213D]">
+
+
+          Availability
+
+
+        </label>
+
+
+
+        <div className="flex gap-3">
+
+
+          <input
+
+
+            value={availabilityInput}
+
+
+            onChange={(e)=>setAvailabilityInput(e.target.value)}
+
+
+            placeholder="Example: Sunday"
+
+
+            className="h-12 flex-1 rounded-xl border px-4"
+
+
+          />
+
+
+
+          <button
+
+
+            type="button"
+
+
+            onClick={addAvailability}
+
+
+            className="rounded-xl bg-[#2563EB] px-5 text-white"
+
+
+          >
+
+            Add
+
+          </button>
+
+
+
+        </div>
+
+
+
+
+
+        <div className="mt-3 flex flex-wrap gap-2">
+
+
+
+          {
+            formData.availability.map((day,index)=>(
+
+
+              <span
+
+
+                key={index}
+
+
+                className="rounded-full bg-green-100 px-3 py-1 text-sm"
+
+
+              >
+
+                {day}
+
+              </span>
+
+
+            ))
+          }
+
+
+
+        </div>
+
+
+
+      </div>
+
+            <div>
 
 
         <label className="mb-2 block text-sm font-semibold text-[#14213D]">
@@ -799,7 +1080,6 @@ export default function AddServiceForm(){
 
 
         </label>
-
 
 
 
@@ -825,7 +1105,6 @@ export default function AddServiceForm(){
 
 
             />
-
 
 
 
@@ -858,8 +1137,6 @@ export default function AddServiceForm(){
 
 
 
-
-
           <div>
 
 
@@ -884,9 +1161,7 @@ export default function AddServiceForm(){
               name="image"
 
 
-              value={
-                formData.image
-              }
+              value={formData.image}
 
 
               onChange={(e)=>{
@@ -914,9 +1189,8 @@ export default function AddServiceForm(){
             />
 
 
+
           </div>
-
-
 
 
 
@@ -929,6 +1203,7 @@ export default function AddServiceForm(){
 
 
               <div className="relative overflow-hidden rounded-2xl border border-gray-200">
+
 
 
                 <img
@@ -978,23 +1253,19 @@ export default function AddServiceForm(){
           }
 
 
-
-
-
         </div>
-
-
-
 
       </div>
 
-            <Button
+
+
+      <Button
 
 
         type="submit"
 
 
-        isLoading={loading}
+        isDisabled={loading}
 
 
         className="h-12 w-full rounded-xl bg-[#2563EB] font-semibold text-white"
@@ -1002,13 +1273,7 @@ export default function AddServiceForm(){
 
       >
 
-
-
         <Send size={18}/>
-
-
-
-
 
         {
 
@@ -1022,16 +1287,7 @@ export default function AddServiceForm(){
 
         }
 
-
-
-
-
       </Button>
-
-
-
-
-
 
     </form>
 
@@ -1040,12 +1296,6 @@ export default function AddServiceForm(){
 
 
 }
-
-
-
-
-
-
 
 
 
@@ -1067,7 +1317,7 @@ function InputField({
   type="text",
 
 
-  placeholder,
+  placeholder="",
 
 
   value,
@@ -1091,7 +1341,7 @@ function InputField({
   type?:string;
 
 
-  placeholder:string;
+  placeholder?:string;
 
 
   value:string;
@@ -1104,7 +1354,8 @@ function InputField({
   )=>void;
 
 
-  icon:React.ReactNode;
+  icon?:React.ReactNode;
+
 
 
 }) {
@@ -1132,23 +1383,23 @@ function InputField({
 
 
 
-
-
-
       <div className="relative">
 
 
 
+        {
+          icon && (
+
+            <div className="absolute left-3 top-3.5 text-gray-400">
 
 
-        <div className="absolute left-3 top-3.5 text-gray-400">
+              {icon}
 
 
-          {icon}
+            </div>
 
-
-        </div>
-
+          )
+        }
 
 
 
@@ -1187,16 +1438,12 @@ function InputField({
 
 
 
-
-
       </div>
 
 
 
 
-
     </div>
-
 
 
   );

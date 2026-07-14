@@ -11,8 +11,8 @@ import {
   Edit,
   Trash2,
   MapPin,
-  DollarSign,
   Layers,
+  Banknote,
 } from "lucide-react";
 
 import Swal from "sweetalert2";
@@ -107,11 +107,6 @@ return;
 
 }
 
-
-
-
-
-
 const result = await getProviderServices(
 
 session.user.id
@@ -147,9 +142,6 @@ toast.error(
 
 
 
-
-
-
 }catch(error){
 
 
@@ -173,30 +165,16 @@ setLoading(false);
 }
 
 
-
 };
 
 
+useEffect(() => {
+  const loadData = async () => {
+    await fetchServices(); 
+  };
 
-
-
-
-
-
-
-useEffect(()=>{
-
-
-fetchServices();
-
-
-},[]);
-
-
-
-
-
-
+  loadData();
+}, []);
 
 
 
@@ -652,7 +630,8 @@ gap-2
 
 >
 
-<DollarSign size={16}/>
+<Banknote size={16}/>
+৳{service.price}
 
 
 <span>

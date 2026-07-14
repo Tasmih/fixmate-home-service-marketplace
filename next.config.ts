@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
 
+
 const nextConfig: NextConfig = {
 
   images: {
@@ -18,7 +19,12 @@ const nextConfig: NextConfig = {
 
       {
         protocol: "https",
-        hostname: "i.ibb.co.com",
+        hostname: "images.unsplash.com",
+      },
+
+      {
+        protocol: "https",
+        hostname: "placehold.co",
       },
 
     ],

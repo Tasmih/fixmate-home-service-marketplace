@@ -91,6 +91,44 @@ min-h-[48px]
 {service.shortDescription}
 </p>
 
+<div className="
+mt-4
+flex
+items-center
+justify-between
+">
+
+<p className="
+text-xl
+font-bold
+text-[#14213D]
+">
+
+৳ {service.price}
+
+</p>
+
+
+<div className="
+flex
+items-center
+gap-1
+text-[#F4B400]
+">
+
+<Star size={16} fill="currentColor"/>
+
+<span>
+
+{service.rating}
+
+</span>
+
+</div>
+
+
+</div>
+
 
 <div
 className="
@@ -99,18 +137,27 @@ pt-5
 "
 >
 
-<button
+<Link
+
+href={`/services/${service._id}`}
+
 className="
 w-full
+text-center
 bg-[#2563EB]
 text-white
 py-3
-rounded-lg
+rounded-xl
+hover:bg-blue-700
+transition
+block
 "
->
-View Details
-</button>
 
+>
+
+View Details
+
+</Link>
 </div>
 
 

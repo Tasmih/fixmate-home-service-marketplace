@@ -17,26 +17,53 @@ interface Booking{
 
 export default function CustomerDashboard(){
 
-  const {data:session}=useSession();
+  const {
+  data:session,
+  isPending
+}=useSession();
 
   const [bookings,setBookings]=useState<Booking[]>([]);
   const [loading,setLoading]=useState(true);
 
 
-  const loadBookings=async()=>{
+
+useEffect(()=>{
+
+  if(!session?.user){
+    return;
+  }
+
+
+  const fetchBookings = async()=>{
 
     try{
 
-      const result=await protectedFetch("/api/bookings/my");
+      const result = await protectedFetch(
+        "/api/bookings/my"
+      );
+
 
       if(result.success){
-        setBookings(result.data || []);
+
+        setBookings(
+          result.data || []
+        );
+
       }
+
 
     }catch(error){
 
-      console.log("Booking Load Error:",error);
-      toast.error("Failed to load bookings");
+      console.log(
+        "Booking Load Error:",
+        error
+      );
+
+
+      toast.error(
+        "Failed to load bookings"
+      );
+
 
     }finally{
 
@@ -47,13 +74,10 @@ export default function CustomerDashboard(){
   };
 
 
-  useEffect(()=>{
+  fetchBookings();
 
-    if(session?.user){
-      loadBookings();
-    }
 
-  },[session]);
+},[session]);
 
 
 
@@ -96,7 +120,31 @@ export default function CustomerDashboard(){
 
   };
 
+if(isPending){
 
+  return (
+
+    <div className="
+      min-h-screen
+      flex
+      items-center
+      justify-center
+      bg-[#F8FAFC]
+    ">
+
+      <div className="
+        text-xl
+        font-semibold
+        text-[#14213D]
+      ">
+        Loading Dashboard...
+      </div>
+
+    </div>
+
+  );
+
+}
 
   return(
     <div className="min-h-screen bg-[#F8FAFC] p-6">

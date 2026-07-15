@@ -88,6 +88,17 @@ export const auth = betterAuth({
         input: true,
 
       },
+      isSuperAdmin:{
+
+type:"boolean",
+
+required:false,
+
+defaultValue:false,
+
+input:false
+
+},
 
 
       phone: {
@@ -134,11 +145,30 @@ export const auth = betterAuth({
 
 
   // JWT Plugin
-  plugins: [
+ plugins: [
 
-    jwt(),
+  jwt({
 
-  ],
+    jwt: {
 
+      definePayload: async ({ user }) => {
+
+        return {
+
+          id: user.id,
+
+          email: user.email,
+
+          role: user.role,
+
+        };
+
+      },
+
+    },
+
+  }),
+
+],
 
 });

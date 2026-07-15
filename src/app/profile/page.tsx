@@ -1,5 +1,5 @@
 "use client";
-
+import { useSession } from "@/lib/auth-client";
 import { useEffect, useState } from "react";
 import { protectedFetch, serverMutation } from "@/lib/api";
 import { toast } from "react-toastify";
@@ -14,6 +14,8 @@ interface Profile {
 }
 
 export default function ProfilePage() {
+
+  const { data: session, isPending } = useSession();
   const [profile, setProfile] = useState<Profile | null>(null);
 
   const [loading, setLoading] = useState(true);
@@ -74,14 +76,46 @@ export default function ProfilePage() {
 
 
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        Loading...
-      </div>
-    );
-  }
+ if(isPending || loading){
+  if(!session?.user){
 
+return (
+
+<div className="
+min-h-screen
+flex
+items-center
+justify-center
+bg-[#F8FAFC]
+">
+
+<h2 className="text-xl font-semibold text-gray-600">
+Please login first
+</h2>
+
+</div>
+
+);
+
+}
+
+return (
+
+<div className="
+min-h-screen
+flex
+items-center
+justify-center
+bg-[#F8FAFC]
+">
+
+Loading...
+
+</div>
+
+);
+
+}
 
 
   return (

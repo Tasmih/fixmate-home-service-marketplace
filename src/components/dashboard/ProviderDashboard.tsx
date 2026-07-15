@@ -10,9 +10,36 @@ import BookingRequests from "@/components/provider/BookingRequests";
 export default function ProviderDashboard() {
 
 
-  const { data: session } = useSession();
+ const {
+  data: session,
+  isPending
+} = useSession();
 
+if(isPending){
 
+  return (
+
+    <div className="
+      min-h-screen
+      flex
+      items-center
+      justify-center
+      bg-[#F8FAFC]
+    ">
+
+      <p className="
+        text-xl
+        font-semibold
+        text-[#14213D]
+      ">
+        Loading Dashboard...
+      </p>
+
+    </div>
+
+  );
+
+}
 
   return (
 

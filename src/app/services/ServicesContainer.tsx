@@ -176,7 +176,43 @@ export default function ServicesContainer({
       params.toString()
 
     );
+if(initialData.length===0){
 
+return (
+
+<div className="
+bg-white
+rounded-2xl
+p-10
+text-center
+">
+
+<h2 className="
+text-xl
+font-bold
+text-[#14213D]
+">
+
+No Services Found
+
+</h2>
+
+
+<p className="
+text-gray-500
+mt-2
+">
+
+Currently no services available.
+
+</p>
+
+
+</div>
+
+);
+
+}
 
 
     return result;

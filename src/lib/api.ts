@@ -52,10 +52,10 @@ await authClient.token();
 const token =
 tokenData?.token;
 
-// console.log(
-//   "PROTECTED TOKEN:",
-//   token
-// );
+console.log(
+  "PROTECTED TOKEN:",
+  token
+);
 
 
 

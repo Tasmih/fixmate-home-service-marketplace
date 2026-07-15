@@ -5,146 +5,111 @@ import CustomerDashboard from "@/components/dashboard/CustomerDashboard";
 import ProviderDashboard from "@/components/dashboard/ProviderDashboard";
 
 import { useSession } from "@/lib/auth-client";
-import { useEffect } from "react";
-import { protectedFetch } from "@/lib/api";
 
 
 export default function DashboardPage(){
 
 
-const {
-data:session,
-isPending
-}=useSession();
+  const {
+    data:session,
+    isPending
+  } = useSession();
 
 
 
-useEffect(()=>{
 
 
-const loadBookings=async()=>{
+  if(isPending){
 
-try{
+    return (
 
-const result =
-await protectedFetch(
-"/api/bookings/my"
-);
+      <div className="
+        min-h-screen
+        flex
+        items-center
+        justify-center
+      ">
 
+        Loading...
 
-console.log(
-"MY BOOKINGS:",
-result
-);
+      </div>
 
+    );
 
-}catch(error){
+  }
 
-console.log(error);
 
-}
 
-};
 
 
-if(session?.user){
+  if(!session?.user){
 
-loadBookings();
+    return (
 
-}
+      <div className="
+        min-h-screen
+        flex
+        items-center
+        justify-center
+      ">
 
+        Please login first
 
-},[session]);
+      </div>
 
+    );
 
+  }
 
 
 
-if(isPending){
 
-return (
 
-<div className="
-min-h-screen
-flex
-items-center
-justify-center
-">
+  const user = session.user as {
 
-Loading...
+    id:string;
 
-</div>
+    name:string;
 
-);
+    email:string;
 
-}
+    role?:
+    "customer"
+    |
+    "provider"
+    |
+    "admin";
 
+  };
 
 
 
-if(!session?.user){
 
-return (
 
-<div className="
-min-h-screen
-flex
-items-center
-justify-center
-">
 
-Please login first
+  switch(user.role){
 
-</div>
 
-);
+    case "admin":
 
-}
+      return <AdminDashboard/>;
 
 
 
+    case "provider":
 
-const user=session.user as {
+      return <ProviderDashboard/>;
 
-id:string;
 
-name:string;
 
-email:string;
+    case "customer":
 
-role?:
-"customer"
-|
-"provider"
-|
-"admin";
+    default:
 
-};
+      return <CustomerDashboard/>;
 
 
-
-
-
-switch(user.role){
-
-
-case "admin":
-
-return <AdminDashboard/>;
-
-
-case "provider":
-
-return <ProviderDashboard/>;
-
-
-
-default:
-
-return <CustomerDashboard/>;
-
-
-}
+  }
 
 
 }

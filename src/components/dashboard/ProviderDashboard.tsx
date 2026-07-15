@@ -1,6 +1,6 @@
 "use client";
 
-
+import EarningsChart from "@/components/provider/EarningsChart";
 import Link from "next/link";
 import { useSession } from "@/lib/auth-client";
 import BookingRequests from "@/components/provider/BookingRequests";
@@ -142,7 +142,7 @@ if(isPending){
 
 
 
-
+<EarningsChart/>
 
         {/* Booking Requests */}
 

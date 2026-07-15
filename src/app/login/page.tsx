@@ -4,7 +4,7 @@ import { authClient, useSession } from "@/lib/auth-client";
 import { Button, Input } from "@heroui/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { toast } from "react-toastify";
 import { FcGoogle } from "react-icons/fc";
@@ -18,25 +18,30 @@ import {
 
 import React from "react";
 
-
 export default function LoginPage() {
-
-
   const router = useRouter();
-
 
   const {
     data: session,
     isPending
   } = useSession();
 
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
+  const fillDemo = (type: "customer" | "provider") => {
+    if (type === "customer") {
+      setEmail("Ayra@gmail.com");
+      setPassword("Ayra@123");
+    } else {
+      setEmail("ayan@gmail.com");
+      setPassword("Ayan@123");
+    }
+  };
 
   useEffect(()=>{
 
-
     if(!isPending && session?.user){
-
 
       const user =
       session.user as typeof session.user & {
@@ -50,12 +55,8 @@ export default function LoginPage() {
 
       };
 
-
-
       const role =
       user.role || "customer";
-
-
 
       if(
         role === "provider" ||
@@ -72,9 +73,7 @@ export default function LoginPage() {
 
       }
 
-
     }
-
 
   },[
     session,
@@ -82,77 +81,35 @@ export default function LoginPage() {
     router
   ]);
 
-
-
-
-
-
   const handleSubmit = async (
-    e: React.SubmitEvent<HTMLFormElement>
+    e: React.FormEvent<HTMLFormElement>
   )=>{
-
 
     e.preventDefault();
 
-
-
-    const formData =
-    new FormData(e.currentTarget);
-
-
-
-    const email =
-    formData.get("email") as string;
-
-
-
-    const password =
-    formData.get("password") as string;
-
-
-
-
-    const {
-      data,
-      error
-    } =
+    const { data, error } =
     await authClient.signIn.email({
-
 
       email,
 
-
       password,
-
 
       callbackURL:"/dashboard"
 
-
     });
 
-
-
-
-
     if(error){
-
 
       toast.error(
         error.message ||
         "Login failed"
       );
 
-
       return;
 
     }
 
-
-
-
-
     if(data){
-
 
       toast.success(
         "Login successful",
@@ -161,48 +118,25 @@ export default function LoginPage() {
         }
       );
 
-
-
       router.refresh();
-
 
     }
 
-
   };
-
-
-
-
-
-
 
   const googleLogin = async()=>{
 
-
     await authClient.signIn.social({
-
 
       provider:"google",
 
-
       callbackURL:"/select-role"
-
 
     });
 
-
   };
 
-
-
-
-
-
-
-
   if(isPending){
-
 
     return (
 
@@ -222,16 +156,9 @@ export default function LoginPage() {
 
     );
 
-
   }
 
-
-
-
-
-
   return (
-
 
     <div
     className="
@@ -244,8 +171,6 @@ export default function LoginPage() {
     py-10
     "
     >
-
-
 
       <div
       className="
@@ -260,11 +185,7 @@ export default function LoginPage() {
       "
       >
 
-
-
-
         {/* LEFT SIDE */}
-
 
         <div
         className="
@@ -281,7 +202,6 @@ export default function LoginPage() {
         "
         >
 
-
           <h1
           className="
           text-3xl
@@ -295,8 +215,6 @@ export default function LoginPage() {
 
           </h1>
 
-
-
           <p
           className="
           mt-4
@@ -309,10 +227,6 @@ export default function LoginPage() {
 
           </p>
 
-
-
-
-
           <div
           className="
           mt-8
@@ -320,39 +234,26 @@ export default function LoginPage() {
           "
           >
 
-
             <Feature
             icon={<FaUserCheck/>}
             text="Verified Professionals"
             />
-
 
             <Feature
             icon={<FaBolt/>}
             text="Quick Service Booking"
             />
 
-
             <Feature
             icon={<FaShieldAlt/>}
             text="Secure Account"
             />
 
-
           </div>
-
-
 
         </div>
 
-
-
-
-
-
-
         {/* RIGHT SIDE */}
-
 
         <div
         className="
@@ -364,15 +265,12 @@ export default function LoginPage() {
         "
         >
 
-
-
           <div
           className="
           text-center
           mb-6
           "
           >
-
 
             <h2
             className="
@@ -386,8 +284,6 @@ export default function LoginPage() {
 
             </h2>
 
-
-
             <p
             className="
             text-gray-500
@@ -400,13 +296,53 @@ export default function LoginPage() {
 
             </p>
 
-
           </div>
 
+          {/* Demo login buttons */}
 
+          <div className="flex gap-2 mb-4">
 
+            <Button
+            type="button"
+            onClick={()=>fillDemo("customer")}
+            className="
+            flex-1
+            h-10
+            rounded-xl
+            border
+            border-gray-200
+            text-xs
+            bg-white
+            text-[#14213D]
+            font-medium
+            "
+            >
 
+              Customer
 
+            </Button>
+
+            <Button
+            type="button"
+            onClick={()=>fillDemo("provider")}
+            className="
+            flex-1
+            h-10
+            rounded-xl
+            border
+            border-gray-200
+            text-xs
+            bg-white
+            text-[#14213D]
+            font-medium
+            "
+            >
+
+             Provider
+
+            </Button>
+
+          </div>
 
           <form
           onSubmit={handleSubmit}
@@ -415,24 +351,23 @@ export default function LoginPage() {
           "
           >
 
-
-
             <Input
+            className="w-full"
             name="email"
             type="email"
+            value={email}
+            onChange={(e)=>setEmail(e.target.value)}
             placeholder="example@gmail.com"
             />
 
-
-
             <Input
+            className="w-full"
             name="password"
             type="password"
+            value={password}
+            onChange={(e)=>setPassword(e.target.value)}
             placeholder="Enter password"
             />
-
-
-
 
             <Button
             type="submit"
@@ -449,12 +384,7 @@ export default function LoginPage() {
 
             </Button>
 
-
           </form>
-
-
-
-
 
           <div
           className="
@@ -471,47 +401,38 @@ export default function LoginPage() {
               OR
             </span>
 
-
             <div className="flex-1 h-px bg-gray-200"/>
-
 
           </div>
 
+        <Button
+onClick={googleLogin}
+className="
+w-full
+h-11
+rounded-xl
+border
+bg-white
+text-[#14213D]
+font-medium
+flex
+items-center
+justify-center
+gap-2
+"
+>
 
+  <FcGoogle size={22}/>
 
+  Continue with Google
 
-
-
-          <Button
-          onClick={googleLogin}
-          className="
-          w-full
-          h-11
-          rounded-xl
-          border
-          bg-white
-          "
-          >
-
-
-            <FcGoogle size={22}/>
-
-            Continue with Google
-
-
-          </Button>
-
-
-
-
-
-
+</Button>
 
           <p
           className="
           text-center
           text-sm
-          text-gray-500
+          text-gray-900
           mt-5
           "
           >
@@ -531,32 +452,17 @@ export default function LoginPage() {
 
             </Link>
 
-
           </p>
-
-
-
 
         </div>
 
-
-
       </div>
-
 
     </div>
 
-
   );
 
-
 }
-
-
-
-
-
-
 
 function Feature({
 
@@ -569,7 +475,6 @@ icon:React.ReactNode;
 text:string;
 
 }){
-
 
 return (
 
@@ -598,15 +503,12 @@ text-[#14213D]
 
 </div>
 
-
 <span>
 {text}
 </span>
 
-
 </div>
 
 );
-
 
 }

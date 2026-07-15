@@ -4,205 +4,147 @@ import AdminDashboard from "@/components/dashboard/AdminDashboard";
 import CustomerDashboard from "@/components/dashboard/CustomerDashboard";
 import ProviderDashboard from "@/components/dashboard/ProviderDashboard";
 
-import { useSession, authClient } from "@/lib/auth-client";
+import { useSession } from "@/lib/auth-client";
 import { useEffect } from "react";
 import { protectedFetch } from "@/lib/api";
 
 
-export default function DashboardPage() {
+export default function DashboardPage(){
 
 
-  const { data: session, isPending } = useSession();
+const {
+data:session,
+isPending
+}=useSession();
 
 
 
-  // Test Token
+useEffect(()=>{
 
-  useEffect(()=>{
 
+const loadBookings=async()=>{
 
-    const getToken = async()=>{
+try{
 
+const result =
+await protectedFetch(
+"/api/bookings/my"
+);
 
-      const {data} = await authClient.token();
 
+console.log(
+"MY BOOKINGS:",
+result
+);
 
-      console.log(
-        "TOKEN:",
-        data?.token
-      );
 
+}catch(error){
 
-    };
+console.log(error);
 
+}
 
-    getToken();
+};
 
 
-  },[]);
+if(session?.user){
 
+loadBookings();
 
+}
 
 
+},[session]);
 
-  // Test Booking API
 
-  useEffect(()=>{
 
 
-    const loadBookings = async()=>{
 
+if(isPending){
 
-      try{
+return (
 
+<div className="
+min-h-screen
+flex
+items-center
+justify-center
+">
 
-        const result =
-        await protectedFetch(
-          "/api/bookings/my"
-        );
+Loading...
 
+</div>
 
-        console.log(
-          "MY BOOKINGS:",
-          result
-        );
+);
 
+}
 
-      }catch(error){
 
 
-        console.log(
-          "BOOKING ERROR:",
-          error
-        );
 
+if(!session?.user){
 
-      }
+return (
 
+<div className="
+min-h-screen
+flex
+items-center
+justify-center
+">
 
-    };
+Please login first
 
+</div>
 
-    if(session?.user){
+);
 
-      loadBookings();
+}
 
-    }
 
 
-  },[session]);
 
+const user=session.user as {
 
+id:string;
 
+name:string;
 
+email:string;
 
+role?:
+"customer"
+|
+"provider"
+|
+"admin";
 
+};
 
-  if(isPending){
 
 
-    return (
 
-      <div className="
-      min-h-screen
-      flex
-      items-center
-      justify-center
-      ">
 
-        Loading...
+switch(user.role){
 
-      </div>
 
-    );
+case "admin":
 
-  }
+return <AdminDashboard/>;
 
 
+case "provider":
 
+return <ProviderDashboard/>;
 
 
 
+default:
 
-  if(!session?.user){
+return <CustomerDashboard/>;
 
 
-    return (
-
-      <div className="
-      min-h-screen
-      flex
-      items-center
-      justify-center
-      ">
-
-
-        Please login first
-
-
-      </div>
-
-    );
-
-
-  }
-
-
-
-
-
-  const user =
-  session.user as typeof session.user & {
-
-    role?:
-    "customer"
-    |
-    "provider"
-    |
-    "admin";
-
-  };
-
-
-
-
-  const role =
-  user.role || "customer";
-
-
-
-
-
-
-
-  if(role==="admin"){
-
-
-    return <AdminDashboard />;
-
-
-  }
-
-
-
-
-
-
-
-  if(role==="provider"){
-
-
-    return <ProviderDashboard />;
-
-
-  }
-
-
-
-
-
-
-  return <CustomerDashboard />;
+}
 
 
 }

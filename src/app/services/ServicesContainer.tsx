@@ -10,6 +10,7 @@ import { X } from "lucide-react";
 import ServiceCard from "@/components/services/ServiceCard";
 import { getServices } from "@/lib/actions/service.actions";
 import { IService } from "@/types/service";
+import ServiceCardSkeleton from "@/components/services/ServiceCardSkeleton";
 
 
 
@@ -82,7 +83,7 @@ initialData:IService[]
 
 const [services,setServices] =useState(initialData);
 
-
+const [loading,setLoading] = useState(false);
 
 const [search,setSearch] =useState("");
 
@@ -174,28 +175,21 @@ let ignore = false;
 
 const loadServices = async()=>{
 
+setLoading(true);
 
 const result = await fetchServices();
 
-
 if(!ignore){
 
+setServices(result.data || []);
 
-setServices(
-result.data || []
-);
-
-
-setTotalPages(
-result.pagination?.totalPages || 1
-);
-
+setTotalPages(result.pagination?.totalPages || 1);
 
 }
 
+setLoading(false);
 
 };
-
 
 loadServices();
 
@@ -428,28 +422,27 @@ Clear Filters
 </button>
 </div>
 
-<div className="
-grid
-grid-cols-1
-md:grid-cols-4
-lg:grid-cols-4
-gap-6
-">
+<div className="grid grid-cols-1 md:grid-cols-4 gap-6">
 
 {
+loading ?
 
-services.map((service)=>(
+Array.from({length:8}).map((_,index)=>(
 
-
-<ServiceCard
-
-key={service._id}
-
-service={service}/>
-
+<ServiceCardSkeleton key={index}/>
 
 ))
 
+:
+
+services.map((service)=>(
+
+<ServiceCard
+key={service._id}
+service={service}
+/>
+
+))
 
 }
 

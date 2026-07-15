@@ -3,84 +3,206 @@
 import AdminDashboard from "@/components/dashboard/AdminDashboard";
 import CustomerDashboard from "@/components/dashboard/CustomerDashboard";
 import ProviderDashboard from "@/components/dashboard/ProviderDashboard";
-import { useSession } from "@/lib/auth-client";
-import { unknown } from "better-auth";
+
+import { useSession, authClient } from "@/lib/auth-client";
+import { useEffect } from "react";
+import { protectedFetch } from "@/lib/api";
+
 
 export default function DashboardPage() {
+
 
   const { data: session, isPending } = useSession();
 
 
-  if (isPending) {
+
+  // Test Token
+
+  useEffect(()=>{
+
+
+    const getToken = async()=>{
+
+
+      const {data} = await authClient.token();
+
+
+      console.log(
+        "TOKEN:",
+        data?.token
+      );
+
+
+    };
+
+
+    getToken();
+
+
+  },[]);
+
+
+
+
+
+  // Test Booking API
+
+  useEffect(()=>{
+
+
+    const loadBookings = async()=>{
+
+
+      try{
+
+
+        const result =
+        await protectedFetch(
+          "/api/bookings/my"
+        );
+
+
+        console.log(
+          "MY BOOKINGS:",
+          result
+        );
+
+
+      }catch(error){
+
+
+        console.log(
+          "BOOKING ERROR:",
+          error
+        );
+
+
+      }
+
+
+    };
+
+
+    if(session?.user){
+
+      loadBookings();
+
+    }
+
+
+  },[session]);
+
+
+
+
+
+
+
+  if(isPending){
+
+
     return (
-      <div className="min-h-screen flex items-center justify-center">
+
+      <div className="
+      min-h-screen
+      flex
+      items-center
+      justify-center
+      ">
+
         Loading...
+
       </div>
+
     );
+
   }
 
 
-  if (!session?.user) {
+
+
+
+
+
+  if(!session?.user){
+
 
     return (
-      <div className="min-h-screen flex items-center justify-center">
+
+      <div className="
+      min-h-screen
+      flex
+      items-center
+      justify-center
+      ">
+
+
         Please login first
+
+
       </div>
+
     );
+
 
   }
 
-const role = session.user.role;
 
 
-if(role === "admin"){
-  return <AdminDashboard />;
-}
 
 
-if(role === "provider"){
-  return <ProviderDashboard />;
-}
+  const user =
+  session.user as typeof session.user & {
+
+    role?:
+    "customer"
+    |
+    "provider"
+    |
+    "admin";
+
+  };
 
 
-return <CustomerDashboard />;
-
-  
 
 
-  return (
-
-    <div className="min-h-screen bg-gray-50 p-10">
-
-      <div className="bg-white rounded-2xl shadow p-8">
-
-        <h1 className="text-3xl font-bold text-[#14213D]">
-          Dashboard
-        </h1>
+  const role =
+  user.role || "customer";
 
 
-        <div className="mt-5 space-y-3">
-
-          <p className="text-gray-700">
-            Welcome, {session.user.name}
-          </p>
 
 
-          <p className="text-gray-700">
-            Email: {session.user.email}
-          </p>
 
 
-          <p className="text-gray-700">
-            Role: {session.user.role}
-          </p>
 
-        </div>
+  if(role==="admin"){
 
-      </div>
 
-    </div>
+    return <AdminDashboard />;
 
-  );
+
+  }
+
+
+
+
+
+
+
+  if(role==="provider"){
+
+
+    return <ProviderDashboard />;
+
+
+  }
+
+
+
+
+
+
+  return <CustomerDashboard />;
+
 
 }

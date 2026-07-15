@@ -113,7 +113,7 @@ export default function SelectRolePage(){
 
           <Button
 
-          disabled={loading}
+          isDisabled={loading}
 
           onClick={()=>updateRole("customer")}
 
@@ -135,7 +135,7 @@ export default function SelectRolePage(){
 
           <Button
 
-          disabled={loading}
+          isDisabled={loading}
 
           onClick={()=>updateRole("provider")}
 

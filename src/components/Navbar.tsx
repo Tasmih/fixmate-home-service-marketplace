@@ -10,7 +10,19 @@ import { User, Menu } from "lucide-react";
 const Navbar = () => {
   const pathname = usePathname();
   const router = useRouter();
-  const { data: session, isPending } = useSession();
+const { data: session, isPending } = useSession();
+
+
+const user = session?.user as (
+  {
+    id:string;
+    name:string;
+    email:string;
+    role?: "customer" | "provider" | "admin";
+  }
+  |
+  undefined
+);
 
   if (isPending) {
     return null;
@@ -67,8 +79,7 @@ const Navbar = () => {
           Contact
         </Link>
       </li>
-
-      {session?.user?.role === "provider" && (
+{user?.role === "provider" && (
         <>
           <li>
             <Link href="/services/add" className="text-gray-600 hover:text-[#2563EB]">

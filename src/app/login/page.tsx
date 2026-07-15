@@ -12,45 +12,92 @@ import React from "react";
 export default function LoginPage() {
   const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
 
-    const formData = new FormData(e.currentTarget);
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
+  e.preventDefault();
+
+
+  const formData = new FormData(e.currentTarget);
+
+  const email = formData.get("email") as string;
+
+  const password = formData.get("password") as string;
+
+
 
   const { data, error } = await authClient.signIn.email({
-  email,
-  password,
-  callbackURL: "/dashboard",
-});
 
-if (data) {
+    email,
 
-  toast.success("Login successful", {
-    icon:<FaCheckCircle/>
+    password,
+
+    callbackURL: "/dashboard",
+
   });
 
 
-  const role = data.user.role;
+
+  if (data) {
 
 
-  if(role === "provider" || role === "admin"){
+    console.log("LOGIN DATA:", data);
 
-    router.push("/dashboard");
+    console.log("USER:", data.user);
+
+
+
+    toast.success("Login successful", {
+
+      icon:<FaCheckCircle/>
+
+    });
+
+
+
+    const user =
+    data.user as typeof data.user & {
+
+      role?:
+      "customer"
+      |
+      "provider"
+      |
+      "admin";
+
+    };
+
+
+
+    const role =
+    user.role || "customer";
+
+
+
+
+    if(
+      role === "provider" ||
+      role === "admin"
+    ){
+
+      router.push("/dashboard");
+
+    }
+
+    else{
+
+      router.push("/");
+
+    }
+
+
+
+    router.refresh();
+
+
 
   }
-  else{
 
-    router.push("/");
-
-  }
-
-
-  router.refresh();
-
-}
-  }
+};
 
   
  const googleLogin = async () => {

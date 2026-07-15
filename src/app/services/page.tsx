@@ -13,10 +13,9 @@ export default async function ServicesPage(){
 
   return (
 
-    <ServicesContainer
-      initialData={result?.data || []}
-      pagination={result?.pagination}
-    />
+   <ServicesContainer
+  initialData={result?.data || []}
+/>
 
   );
 

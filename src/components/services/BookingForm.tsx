@@ -405,15 +405,11 @@ showConfirmButton:false
 
 });
 
+if(payment.url){
 
+  window.location.href = payment.url;
 
-
-
-
-
-
-
-window.location.href = payment.url;
+}
 
 
 

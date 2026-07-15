@@ -26,6 +26,7 @@ export default function RegisterPage() {
       name,
       email,
       password,
+     // @ts-ignore
       role,
     });
 
@@ -109,32 +110,46 @@ export default function RegisterPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
 
 
-            <Input
-              name="name"
-              label="Full Name"
-              placeholder="Enter your name"
-              className="w-full"
-            />
+  <div>
+  <label className="block text-sm font-semibold mb-2">
+    Full Name
+  </label>
+
+  <Input
+    name="name"
+    placeholder="Enter your name"
+    className="w-full"
+  />
+</div>
 
 
 
-            <Input
-              name="email"
-              type="email"
-              label="Email"
-              placeholder="example@gmail.com"
-              className="w-full"
-            />
+           <div>
+  <label className="block text-sm font-semibold mb-2">
+    Full Name
+  </label>
+
+  <Input
+    name="name"
+    placeholder="Enter your name"
+    className="w-full"
+  />
+</div>
 
 
 
-            <Input
-              name="password"
-              type="password"
-              label="Password"
-              placeholder="Create password"
-              className="w-full"
-            />
+       <div>
+  <label className="block text-sm font-semibold mb-2">
+    Password
+  </label>
+
+  <Input
+    name="password"
+    type="password"
+    placeholder="Create password"
+    className="w-full"
+  />
+</div>
 
 
 

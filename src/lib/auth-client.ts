@@ -4,9 +4,7 @@ import { jwtClient } from "better-auth/client/plugins";
 
 export const authClient = createAuthClient({
 
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
-
-  plugins:[
+  plugins: [
     jwtClient()
   ],
 
@@ -29,18 +27,18 @@ export type UserRole =
 
 export interface AuthUser {
 
-  id:string;
+  id: string;
 
-  name:string;
+  name: string;
 
-  email:string;
+  email: string;
 
-  emailVerified:boolean;
+  emailVerified: boolean;
 
-  role?:UserRole;
+  role?: UserRole;
 
-  phone?:string;
+  phone?: string;
 
-  avatar?:string;
+  avatar?: string;
 
 }

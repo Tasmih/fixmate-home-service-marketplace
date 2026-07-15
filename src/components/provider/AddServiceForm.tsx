@@ -5,6 +5,10 @@ import React, {
 } from "react";
 
 import {
+  useRouter,
+} from "next/navigation";
+
+import {
   uploadImage,
   uploadImageFromUrl,
 } from "@/lib/actions/upload.actions";
@@ -81,6 +85,9 @@ const initialState:IServiceFormData = {
 
 
 export default function AddServiceForm(){
+
+
+  const router = useRouter();
 
 
   const [tagInput,setTagInput] = useState("");
@@ -464,6 +471,14 @@ export default function AddServiceForm(){
 
 
         setImagePreview("");
+
+
+
+        router.push(
+
+          "/dashboard"
+
+        );
 
 
 

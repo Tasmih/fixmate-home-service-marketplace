@@ -1,4 +1,23 @@
+"use client";
+
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+
 export default function PaymentSuccessPage(){
+
+  const router = useRouter();
+
+  useEffect(()=>{
+
+    const timer = setTimeout(()=>{
+
+      router.push("/services");
+
+    }, 2500);
+
+    return ()=> clearTimeout(timer);
+
+  },[router]);
 
 return (
 
@@ -36,6 +55,16 @@ text-gray-600
 ">
 
 Your booking payment has been completed.
+
+</p>
+
+<p className="
+mt-2
+text-sm
+text-gray-400
+">
+
+Redirecting to services...
 
 </p>
 

@@ -111,30 +111,21 @@ return;
 
 const confirm = await Swal.fire({
 
-
 title:"Confirm Booking?",
 
-
-text:"Are you sure you want to book this service?",
-
+text:`You have to pay ৳${form.paymentAmount} to book this service`,
 
 icon:"question",
 
-
 showCancelButton:true,
-
 
 confirmButtonText:"Yes, Book Now",
 
-
 cancelButtonText:"Cancel",
-
 
 confirmButtonColor:"#2563EB",
 
-
 cancelButtonColor:"#DC2626"
-
 
 });
 

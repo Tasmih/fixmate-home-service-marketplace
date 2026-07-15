@@ -1,18 +1,30 @@
 "use client";
 
+
 import {
+  useCallback,
   useEffect,
   useState,
-  useCallback
 } from "react";
 
-import { X } from "lucide-react";
+
+import {
+  X
+} from "lucide-react";
+
+
 import ServiceCard from "@/components/services/ServiceCard";
-import { getServices } from "@/lib/actions/service.actions";
-import { IService } from "@/types/service";
+
 import ServiceCardSkeleton from "@/components/services/ServiceCardSkeleton";
 
+import {
+  getServices
+} from "@/lib/actions/service.actions";
 
+
+import {
+  IService
+} from "@/types/service";
 
 
 
@@ -20,47 +32,27 @@ import ServiceCardSkeleton from "@/components/services/ServiceCardSkeleton";
 
 const categories = [
 
-"All",
-
-"Beautician",
-
-"Hourly Housekeeper",
-
-"Nurse",
-
-"Caregiver",
-
-"AC Repair",
-
-"Electrician",
-
-"Plumber",
-
-"Mechanic",
-
-"Carpenter",
-
-"Painter",
-
-"Cleaner",
-
-"Home Tutor",
-
-"Computer Repair",
-
-"Appliance Repair",
-
-"Gardener",
-
-"Pest Control",
-
-"Security Guard",
-
-"Moving Service",
-
-"Laundry Service",
-
-"Cooking Service"
+  "All",
+  "Beautician",
+  "Hourly Housekeeper",
+  "Nurse",
+  "Caregiver",
+  "AC Repair",
+  "Electrician",
+  "Plumber",
+  "Mechanic",
+  "Carpenter",
+  "Painter",
+  "Cleaner",
+  "Home Tutor",
+  "Computer Repair",
+  "Appliance Repair",
+  "Gardener",
+  "Pest Control",
+  "Security Guard",
+  "Moving Service",
+  "Laundry Service",
+  "Cooking Service"
 
 ];
 
@@ -68,503 +60,901 @@ const categories = [
 
 
 
+interface Props {
+
+  initialData:IService[];
+
+}
+
+
+
+
+
 export default function ServicesContainer({
 
+  initialData
 
-initialData
+}:Props){
 
 
-}:{
 
-initialData:IService[]
+  const [services,setServices] = useState<IService[]>(
 
-}){
+    initialData
 
+  );
 
-const [services,setServices] =useState(initialData);
 
-const [loading,setLoading] = useState(false);
 
-const [search,setSearch] =useState("");
+  const [loading,setLoading] = useState(false);
 
 
 
-const [category,setCategory] =useState("All");
+  const [search,setSearch] = useState("");
 
 
 
-const [sort,setSort] =useState("");
+  const [category,setCategory] = useState("All");
 
 
 
-const [page,setPage] = useState(1);
+  const [sort,setSort] = useState("");
 
 
 
-const [totalPages,setTotalPages] =useState(1);
+  const [page,setPage] = useState(1);
 
-const fetchServices = useCallback(async()=>{
 
 
-const params = new URLSearchParams();
+  const [totalPages,setTotalPages] = useState(1);
 
 
-if(search){
 
-params.append(
-"search",
-search
-);
 
-}
 
 
-if(category !== "All"){
 
-params.append(
-"category",
-category
-);
 
-}
 
+  const fetchServices = useCallback(async()=>{
 
-if(sort){
 
-params.append(
-"sort",
-sort
-);
+    const params = new URLSearchParams();
 
-}
 
 
-params.append(
-"page",
-String(page)
-);
+    if(search){
 
+      params.append(
+        "search",
+        search
+      );
 
-params.append(
-"limit",
-"8"
-);
+    }
 
 
 
-const result = await getServices(
-params.toString()
-);
+    if(category !== "All"){
 
+      params.append(
+        "category",
+        category
+      );
 
-return result;
+    }
 
 
-},[
-search,
-category,
-sort,
-page
-]);
 
-useEffect(()=>{
+    if(sort){
 
+      params.append(
+        "sort",
+        sort
+      );
 
-let ignore = false;
+    }
 
 
-const loadServices = async()=>{
 
-setLoading(true);
+    params.append(
+      "page",
+      String(page)
+    );
 
-const result = await fetchServices();
 
-if(!ignore){
 
-setServices(result.data || []);
+    params.append(
+      "limit",
+      "8"
+    );
 
-setTotalPages(result.pagination?.totalPages || 1);
 
-}
 
-setLoading(false);
 
-};
+    const result = await getServices(
 
-loadServices();
+      params.toString()
 
+    );
 
-return()=>{
 
-ignore=true;
 
-};
+    return result;
 
 
-},[
-fetchServices
-]);
 
+  },[
 
+    search,
 
-return (
+    category,
 
-<div className="
-min-h-screen
-bg-[#F8FAFC]
-p-6
-">
+    sort,
 
+    page
 
-<div className="
-max-w-7xl
-mx-auto
-">
-<h1 className="
-text-3xl
-font-bold
-text-[#14213D]
-mb-6
-">
-Explore Services
-</h1>
+  ]);
 
-<div className="
-grid
-md:grid-cols-4
-gap-4
-mb-8
-">
-<div className="relative">
 
-<input
 
-value={search}
 
-onChange={(e)=>{
 
-setSearch(e.target.value);
 
-setPage(1);
 
-}}
 
-placeholder="Search service..."
 
-className="
-w-full
-rounded-xl
-border
-px-4
-py-3
-pr-10
-outline-none
-"
+  useEffect(()=>{
 
-/>
 
+    let ignore = false;
 
-{
-search && (
 
-<button
 
-type="button"
+    const loadServices = async()=>{
 
-onClick={()=>{
 
-setSearch("");
+      try{
 
-setPage(1);
 
-}}
+        setLoading(true);
 
-className="
-absolute
-right-3
-top-1/2
--translate-y-1/2
-text-gray-500
-hover:text-red-500
-"
 
->
 
-<X size={18}/>
+        const result = await fetchServices();
 
 
-</button>
 
-)
 
-}
+        if(!ignore){
 
 
-</div>
+          setServices(
 
-<select
+            result.data || []
 
-value={category}
+          );
 
-onChange={(e)=>{
 
-setCategory(e.target.value);
 
-setPage(1);
+          setTotalPages(
 
-}}
+            result.pagination?.totalPages || 1
 
-className="
-rounded-xl
-border
-px-4
-py-3
-"
+          );
 
->
 
+        }
 
-{
-categories.map((item)=>(
 
-<option
 
-key={item}
 
-value={item}
+      }catch(error){
 
->
 
-{item}
+        console.log(
+          "Service Fetch Error:",
+          error
+        );
 
-</option>
 
-))
 
-}
+        if(!ignore){
 
+          setServices([]);
 
-</select>
+        }
 
-<select
 
-value={sort}
 
-onChange={(e)=>
-{
+      }finally{
 
-setSort(e.target.value);
 
-setPage(1);
+        if(!ignore){
 
-}}
+          setLoading(false);
 
-className="
-rounded-xl
-border
-px-4
-py-3
-"
+        }
 
->
 
+      }
 
-<option value="">
 
-Newest
+    };
 
-</option>
 
 
-<option value="low">
 
-Price Low - High
+    loadServices();
 
-</option>
 
 
-<option value="high">
 
-Price High - Low
+    return()=>{
 
-</option>
+      ignore=true;
 
+    };
 
-</select>
 
-<button
 
-type="button"
+  },[fetchServices]);
 
-onClick={()=>{
 
-setSearch("");
 
-setCategory("All");
 
-setSort("");
 
-setPage(1);
 
-}}
 
-className="
-rounded-xl
-border
-px-4
-py-3
-text-sm
-hover:bg-gray-100
-"
 
->
-Clear Filters
-</button>
-</div>
 
-<div className="grid grid-cols-1 md:grid-cols-4 gap-6">
 
-{
-loading ?
 
-Array.from({length:8}).map((_,index)=>(
+  return (
 
-<ServiceCardSkeleton key={index}/>
 
-))
+    <main
 
-:
+      className="
+      min-h-screen
+      bg-[#F8FAFC]
+      p-4
+      sm:p-6
+      "
 
-services.map((service)=>(
+    >
 
-<ServiceCard
-key={service._id}
-service={service}
-/>
 
-))
 
-}
+      <div
 
-</div>
+        className="
+        max-w-7xl
+        mx-auto
+        "
 
-<div className="
-flex
-justify-center
-gap-3
-mt-10
-">
-<button
+      >
 
-disabled={page===1}
 
-onClick={()=>setPage(page-1)}
 
-className="
-px-4
-py-2
-rounded-lg
-border
-disabled:opacity-50
-"
+        <h1
 
->
+          className="
+          text-3xl
+          font-bold
+          text-[#14213D]
+          "
 
-Previous
+        >
 
-</button>
+          Explore Services
 
-{
+        </h1>
 
-Array.from(
-{
-length:totalPages
-},
-(_,i)=>i+1
-).map(num=>(
 
 
-<button
 
-key={num}
+        <p
 
-onClick={()=>setPage(num)}
+          className="
+          text-gray-500
+          mt-2
+          mb-8
+          "
 
-className={`
+        >
 
-px-4
-py-2
-rounded-lg
-border
+          Find trusted home services near you
 
-${
+        </p>
 
-page===num
 
-?
 
-"bg-[#2563EB] text-white"
 
-:
 
-""
 
-}
 
-`}
 
->
 
-{num}
+        {/* Filters */}
 
-</button>
 
+        <div
 
+          className="
+          grid
+          grid-cols-1
+          md:grid-cols-4
+          gap-4
+          mb-10
+          "
 
-))
+        >
 
-}
 
 
+          <div
 
+            className="
+            relative
+            "
 
+          >
 
-<button
 
-disabled={page===totalPages}
 
-onClick={()=>setPage(page+1)}
+            <input
 
-className="
-px-4
-py-2
-rounded-lg
-border
-disabled:opacity-50
-"
 
->
+              value={search}
 
-Next
 
-</button>
 
+              onChange={(e)=>{
 
 
+                setSearch(
+                  e.target.value
+                );
 
 
+                setPage(1);
 
-</div>
 
+              }}
 
 
 
+              placeholder="Search service..."
 
-</div>
 
-</div>
 
-);
+              className="
+              w-full
+              rounded-xl
+              border
+              px-4
+              py-3
+              pr-10
+              outline-none
+              focus:ring-2
+              focus:ring-[#2563EB]
+              "
+
+            />
+
+
+
+
+
+            {
+
+              search && (
+
+
+                <button
+
+
+                  onClick={()=>{
+
+
+                    setSearch("");
+
+                    setPage(1);
+
+
+                  }}
+
+
+
+                  className="
+                  absolute
+                  right-3
+                  top-1/2
+                  -translate-y-1/2
+                  text-gray-400
+                  "
+
+                >
+
+
+                  <X size={18}/>
+
+
+                </button>
+
+
+              )
+
+
+            }
+
+
+
+          </div>
+
+
+
+
+
+
+
+
+
+          <select
+
+            value={category}
+
+
+            onChange={(e)=>{
+
+
+              setCategory(
+                e.target.value
+              );
+
+
+              setPage(1);
+
+
+            }}
+
+
+            className="
+            rounded-xl
+            border
+            px-4
+            py-3
+            "
+
+          >
+
+
+            {
+
+              categories.map(item=>(
+
+
+                <option
+
+                  key={item}
+
+                  value={item}
+
+                >
+
+                  {item}
+
+                </option>
+
+
+              ))
+
+            }
+
+
+          </select>
+
+
+
+
+
+
+
+
+
+          <select
+
+
+            value={sort}
+
+
+            onChange={(e)=>{
+
+
+              setSort(
+                e.target.value
+              );
+
+
+              setPage(1);
+
+
+            }}
+
+
+
+            className="
+            rounded-xl
+            border
+            px-4
+            py-3
+            "
+
+          >
+
+
+
+            <option value="">
+
+              Newest
+
+            </option>
+
+
+
+            <option value="low">
+
+              Price Low - High
+
+            </option>
+
+
+
+            <option value="high">
+
+              Price High - Low
+
+            </option>
+
+
+
+          </select>
+
+
+
+
+
+
+
+
+
+          <button
+
+
+            onClick={()=>{
+
+
+              setSearch("");
+
+              setCategory("All");
+
+              setSort("");
+
+              setPage(1);
+
+
+            }}
+
+
+
+
+            className="
+            rounded-xl
+            border
+            px-4
+            py-3
+            hover:bg-gray-100
+            transition
+            "
+
+          >
+
+            Clear Filters
+
+
+          </button>
+
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+
+
+        {/* Cards */}
+
+
+
+        <div
+
+          className="
+          grid
+          grid-cols-1
+          sm:grid-cols-2
+          lg:grid-cols-4
+          gap-6
+          "
+
+        >
+
+
+
+          {
+
+            loading ?
+
+
+            Array.from({
+
+              length:8
+
+            }).map((_,index)=>(
+
+
+              <ServiceCardSkeleton
+
+                key={index}
+
+              />
+
+
+            ))
+
+
+
+            :
+
+
+            services.length > 0 ?
+
+
+
+            services.map(service=>(
+
+
+              <ServiceCard
+
+
+                key={service._id}
+
+
+                service={service}
+
+
+              />
+
+
+            ))
+
+
+
+            :
+
+
+            <div
+
+              className="
+              col-span-full
+              text-center
+              py-10
+              text-gray-500
+              "
+
+            >
+
+              No services found
+
+
+            </div>
+
+
+
+          }
+
+
+
+        </div>
+
+
+
+
+
+
+
+
+
+        {/* Pagination */}
+
+
+
+        <div
+
+          className="
+          flex
+          justify-center
+          items-center
+          gap-2
+          mt-10
+          flex-wrap
+          "
+
+        >
+
+
+
+          <button
+
+
+            disabled={page===1}
+
+
+
+            onClick={()=>setPage(page-1)}
+
+
+
+            className="
+            px-4
+            py-2
+            rounded-lg
+            border
+            disabled:opacity-50
+            "
+
+          >
+
+            Previous
+
+
+          </button>
+
+
+
+
+
+
+
+
+          {
+
+            Array.from({
+
+              length:totalPages
+
+            }).map((_,index)=>{
+
+
+              const number=index+1;
+
+
+
+              return (
+
+                <button
+
+
+                  key={number}
+
+
+                  onClick={()=>setPage(number)}
+
+
+
+                  className={`
+
+                  px-4
+                  py-2
+                  rounded-lg
+                  border
+
+                  ${
+                    page===number
+
+                    ?
+
+                    "bg-[#2563EB] text-white"
+
+                    :
+
+                    ""
+
+                  }
+
+                  `}
+
+
+                >
+
+
+                  {number}
+
+
+
+                </button>
+
+
+              )
+
+
+            })
+
+
+          }
+
+
+
+
+
+
+
+
+
+          <button
+
+
+            disabled={page===totalPages}
+
+
+
+            onClick={()=>setPage(page+1)}
+
+
+
+            className="
+            px-4
+            py-2
+            rounded-lg
+            border
+            disabled:opacity-50
+            "
+
+
+          >
+
+
+            Next
+
+
+          </button>
+
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+      </div>
+
+
+    </main>
+
+
+  );
 
 
 }

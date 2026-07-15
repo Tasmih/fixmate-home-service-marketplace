@@ -28,18 +28,38 @@ export const createService = async (
 // Get All Services
 
 export const getServices = async (
-
   query:string = ""
+)=>{
 
-):Promise<IServiceResponse> => {
+  try{
+
+    const result = await serverFetch(
+      `/api/services?${query}`
+    );
+
+    console.log(
+      "SERVICE API RESULT:",
+      result
+    );
 
 
-  return serverFetch(
+    return result;
 
-    `/api/services?${query}`
 
-  );
+  }catch(error){
 
+    console.log(
+      "SERVICE FETCH ERROR:",
+      error
+    );
+
+
+    return {
+      success:false,
+      data:[]
+    };
+
+  }
 
 };
 

@@ -33,7 +33,7 @@ Access Denied
 
 
 <p className="text-gray-500 mt-3">
-You don't have permission to access this page
+You don't have permission to access this page.
 </p>
 
 

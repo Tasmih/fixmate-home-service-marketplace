@@ -314,25 +314,25 @@ toast.success(
 
 const payment = await createCheckoutSession({
 
-
-
 bookingId:
 
 result.data._id,
-
-
 
 amount:
 
 Number(form.paymentAmount),
 
-
-
 serviceName:
 
-service.title
+service.title,
 
+userId:
 
+session.user.id,
+
+serviceId:
+
+service._id
 
 });
 

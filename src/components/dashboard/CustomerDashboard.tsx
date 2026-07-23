@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { useSession } from "@/lib/auth-client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, Suspense } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { protectedFetch, serverMutation } from "@/lib/api";
 import { toast } from "react-toastify";
+import Swal from "sweetalert2";
 
 interface Booking{
   _id:string;
@@ -15,17 +17,46 @@ interface Booking{
   bookingStatus:string;
 }
 
-export default function CustomerDashboard(){
+function CustomerDashboardContent(){
 
   const {
-  data:session,
-  isPending
-}=useSession();
+    data:session,
+    isPending
+  }=useSession();
 
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [bookings,setBookings]=useState<Booking[]>([]);
   const [loading,setLoading]=useState(true);
+  const hasNotifiedRef = useRef(false);
 
+  useEffect(() => {
+    const isPaymentSuccess = searchParams.get("payment_success");
+    const amount = searchParams.get("amount") || "500";
 
+    if (isPaymentSuccess === "true" && !hasNotifiedRef.current) {
+      hasNotifiedRef.current = true;
+
+      // Clean up search params from URL immediately
+      if (typeof window !== "undefined") {
+        window.history.replaceState({}, "", window.location.pathname);
+      }
+
+      toast.success(`Advance payment of ${amount} BDT received successfully!`, {
+        toastId: "payment-success-toast",
+        position: "top-right",
+        autoClose: 5000
+      });
+
+      Swal.fire({
+        icon: "success",
+        title: "Payment Confirmed!",
+        text: `Advance payment of ${amount} BDT was received successfully.`,
+        confirmButtonColor: "#2563EB",
+        timer: 4000
+      });
+    }
+  }, [searchParams]);
 
 useEffect(()=>{
 
@@ -78,6 +109,7 @@ useEffect(()=>{
 
 
 },[session]);
+
 
 
 
@@ -265,7 +297,7 @@ if(isPending){
                           Payment Status
                         </p>
 
-                        <span className="font-semibold text-[#2563EB]">
+                        <span className="font-semibold text-[#2563EB] capitalize">
                           {booking.paymentStatus}
                         </span>
 
@@ -274,9 +306,35 @@ if(isPending){
                           Booking Status
                         </p>
 
-                        <span className="font-semibold">
-                          {booking.bookingStatus}
-                        </span>
+                        {booking.bookingStatus === "pending" ? (
+                          <span className="inline-block px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-semibold mt-1">
+                            Awaiting Provider Confirmation
+                          </span>
+                        ) : booking.bookingStatus === "confirmed" || booking.bookingStatus === "accepted" ? (
+                          <span className="inline-block px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-semibold mt-1">
+                            Confirmed
+                          </span>
+                        ) : booking.bookingStatus === "rejected" ? (
+                          <div>
+                            <span className="inline-block px-3 py-1 bg-red-100 text-red-800 rounded-full text-xs font-semibold mt-1">
+                              Rejected
+                            </span>
+                            {(booking as any).rejectionReason && (
+                              <p className="text-xs text-red-600 mt-1 italic">
+                                Reason: {(booking as any).rejectionReason}
+                              </p>
+                            )}
+                            {(booking as any).refundStatus === "refunded" && (
+                              <p className="text-xs text-green-600 font-medium mt-1">
+                                ✓ Advance Refunded
+                              </p>
+                            )}
+                          </div>
+                        ) : (
+                          <span className="font-semibold capitalize">
+                            {booking.bookingStatus}
+                          </span>
+                        )}
 
                       </div>
 
@@ -290,7 +348,7 @@ if(isPending){
 
                       <button
                         onClick={()=>handleCancel(booking._id)}
-                        className="mt-5 bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-xl"
+                        className="mt-5 bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-xl text-sm"
                       >
                         Cancel Booking
                       </button>
@@ -319,7 +377,17 @@ if(isPending){
 
 }
 
-
+export default function CustomerDashboard() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-[#F8FAFC]">
+        <div className="text-xl font-semibold text-[#14213D]">Loading Dashboard...</div>
+      </div>
+    }>
+      <CustomerDashboardContent />
+    </Suspense>
+  );
+}
 
 function DashboardCard({
   title,

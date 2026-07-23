@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import Swal from "sweetalert2";
 
 import {
   protectedFetch,
@@ -95,98 +96,75 @@ loadBookings();
 
 
 
-const updateBooking=async(
+  const handleAccept = async (id: string) => {
+    try {
+      const result = await serverMutation(
+        `/api/bookings/provider-status/${id}`,
+        { status: "confirmed" },
+        "PATCH"
+      );
 
-id:string,
+      if (result.success) {
+        toast.success("Booking confirmed successfully");
+        setBookings((prev) =>
+          prev.map((item) =>
+            item._id === id ? { ...item, bookingStatus: "confirmed" } : item
+          )
+        );
+      } else {
+        toast.error(result.message || "Confirmation failed");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong");
+    }
+  };
 
-action:"accept"|"reject"
+  const handleReject = async (id: string) => {
+    try {
+      const { value: rejectionReason, isConfirmed } = await Swal.fire({
+        title: "Reject Booking Request?",
+        text: "Are you sure? If advance payment was made, a refund will be initiated.",
+        input: "textarea",
+        inputPlaceholder: "Enter reason for rejection (optional)...",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Reject & Refund",
+        cancelButtonText: "Cancel",
+        confirmButtonColor: "#DC2626",
+        cancelButtonColor: "#6B7280"
+      });
 
-)=>{
+      if (!isConfirmed) return;
 
+      const result = await serverMutation(
+        `/api/bookings/provider-status/${id}`,
+        { status: "rejected", rejectionReason },
+        "PATCH"
+      );
 
-try{
+      if (result.success) {
+        toast.success(result.message || "Booking rejected");
+        setBookings((prev) =>
+          prev.map((item) =>
+            item._id === id ? { ...item, bookingStatus: "rejected" } : item
+          )
+        );
 
-
-const result = await serverMutation(
-
-`/api/bookings/${id}/${action}`,
-
-null,
-
-"PATCH"
-
-);
-
-
-
-if(result.success){
-
-
-toast.success(
-`Booking ${action}ed successfully`
-);
-
-
-
-setBookings(prev=>
-
-prev.map(item=>
-
-item._id===id
-
-?
-
-{
-
-...item,
-
-bookingStatus:
-action==="accept"
-?
-"accepted"
-:
-"rejected"
-
-}
-
-:
-
-item
-
-)
-
-);
-
-
-
-}else{
-
-
-toast.error(
-result.message || "Failed"
-);
-
-
-}
-
-
-
-}catch(error){
-
-
-console.log(error);
-
-
-toast.error(
-"Something went wrong"
-);
-
-
-}
-
-
-
-};
+        Swal.fire({
+          icon: "info",
+          title: "Booking Rejected",
+          text: result.message || "Booking request has been rejected.",
+          confirmButtonColor: "#2563EB"
+        });
+      } else {
+        toast.error(result.message || "Rejection failed");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong");
+    }
+  };
 
 
 
@@ -440,10 +418,7 @@ gap-3
 
 <button
 
-onClick={()=>updateBooking(
-booking._id,
-"accept"
-)}
+onClick={()=>handleAccept(booking._id)}
 
 className="
 bg-green-600
@@ -464,10 +439,7 @@ Accept
 
 <button
 
-onClick={()=>updateBooking(
-booking._id,
-"reject"
-)}
+onClick={()=>handleReject(booking._id)}
 
 className="
 bg-red-500
